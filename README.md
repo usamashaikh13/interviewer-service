@@ -94,6 +94,6 @@ spring.datasource.password=your_password
 <h2>📫 Contact</h2>
 <p>
   For questions, ideas, or contributions:<br>
-  📧 <a href="mailto:shaikhusama745@gmail.com">youremail@example.com</a><br>
+  📧 <a href="mailto:shaikhusama745@gmail.com">shaikhusama745@gmail.com</a><br>
   🔗 <a href="https://github.com/usamashaikh13" target="_blank">GitHub</a>
 </p>
