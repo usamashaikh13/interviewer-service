@@ -1,22 +1,36 @@
 package com.xplore.interviewer.entity;
 
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class InterviewSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long interviewerId;
     private String interviewerName;
-    private String dateTime;
-    private String status; // AVAILABLE, BOOKED, RESERVED, COMPLETED
 
-    private String candidateName;
+    @ElementCollection
+    @CollectionTable(
+            name = "interviewer_skills",
+            joinColumns = @JoinColumn(name = "slot_id")
+    )
+    @Column(name = "skill")
+    private Set<String> technicalSkills;
+
+    private Integer minYearsExperience;
+    private LocalDateTime startTime;
+    private Integer durationMinutes; // 30, 45, 60
+
+    private String round; // L1, L2
+
+    @Enumerated(EnumType.STRING)
+    private SlotStatus status;
+
+    private Long bookedCandidateId; // Added this field
 }

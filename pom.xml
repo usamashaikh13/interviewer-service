@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version> <!-- Change to 3.1.5 if 3.5.3 is not stable/released -->
+		<version>3.1.5</version>
 		<relativePath/>
 	</parent>
 
@@ -19,6 +19,8 @@
 
 	<properties>
 		<java.version>21</java.version>
+		<!-- Add httpclient5 version property -->
+		<httpclient5.version>5.2.1</httpclient5.version>
 	</properties>
 
 	<dependencies>
@@ -26,6 +28,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Fixed HttpClient5 dependency -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>${httpclient5.version}</version>
 		</dependency>
 
 		<!-- JPA + Hibernate -->
@@ -45,7 +54,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -92,5 +100,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
