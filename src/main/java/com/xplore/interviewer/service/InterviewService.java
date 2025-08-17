@@ -5,6 +5,8 @@ import com.xplore.interviewer.entity.InterviewSlot;
 import com.xplore.interviewer.entity.SlotStatus;
 import com.xplore.interviewer.repository.InterviewSlotRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,11 +20,19 @@ public class InterviewService {
     }
 
     public InterviewSlot addSlot(InterviewSlot slot) {
-        if (!List.of(30, 45, 60).contains(slot.getDurationMinutes())) {
-            throw new IllegalArgumentException("Invalid duration. Must be 30, 45, or 60 minutes");
+        if (slot.getTechnicalSkills() == null || slot.getTechnicalSkills().contains(null)) {
+            throw new IllegalArgumentException("Technical skills must not be null or contain null elements");
         }
+
+        if (slot.getDurationMinutes() == null && slot.getStartTime() != null && slot.getEndTime() != null) {
+            long minutes = ChronoUnit.MINUTES.between(slot.getStartTime(), slot.getEndTime());
+            slot.setDurationMinutes((int) minutes);
+        }
+
         return slotRepository.save(slot);
     }
+
+
 
     public List<InterviewSlotResponse> getAvailableSlots() {
         return slotRepository.findByStatus(SlotStatus.AVAILABLE).stream()

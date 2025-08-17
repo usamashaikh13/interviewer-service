@@ -25,6 +25,7 @@ public class InterviewSlot {
 
     private Integer minYearsExperience;
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Integer durationMinutes; // 30, 45, 60
 
     private String round; // L1, L2
