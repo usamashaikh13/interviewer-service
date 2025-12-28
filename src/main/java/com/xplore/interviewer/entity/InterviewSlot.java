@@ -17,7 +17,7 @@ public class InterviewSlot {
 
     @ElementCollection
     @CollectionTable(
-            name = "interviewer_skills",
+            name = "slot_skills",
             joinColumns = @JoinColumn(name = "slot_id")
     )
     @Column(name = "skill")

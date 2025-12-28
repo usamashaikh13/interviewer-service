@@ -2,6 +2,7 @@ package com.xplore.interviewer.controller;
 
 import com.xplore.interviewer.dto.InterviewSlotResponse;
 import com.xplore.interviewer.entity.InterviewSlot;
+import com.xplore.interviewer.entity.SlotStatus;
 import com.xplore.interviewer.service.InterviewService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ public class InterviewController {
 
     @PostMapping
     public InterviewSlot createSlot(@RequestBody InterviewSlot slot) {
-        if (slot.getTechnicalSkills() == null || slot.getTechnicalSkills().isEmpty()) {
-            throw new IllegalArgumentException("Skills must not be null or empty");
+        // Set default status if not provided
+        if (slot.getStatus() == null) {
+            slot.setStatus(SlotStatus.AVAILABLE);
         }
         return interviewService.addSlot(slot);
     }
