@@ -1,99 +1,181 @@
-<h1>Interviewer Service</h1>
+# Interviewer Service
 
-<p>
-  <strong>Part of the Xplore Interview Automation Platform</strong> — This microservice manages interview slots, including creation, retrieval, and status tracking.
-</p>
+Interviewer Service is part of the Xplore hiring platform. It manages interviewers, interviewer availability, interview slots, slot booking, interview feedback, and email notifications.
 
-<hr>
+## Tech Stack
 
-<h2>🛠️ Tech Stack</h2>
-<ul>
-  <li>Java 21</li>
-  <li>Spring Boot 3.5.3</li>
-  <li>Spring Data JPA</li>
-  <li>MySQL</li>
-  <li>Lombok</li>
-  <li>Maven</li>
-</ul>
+- Java 21
+- Spring Boot 3.1.5
+- Spring Web
+- Spring Data JPA
+- H2 in-memory database
+- Lombok
+- Maven
 
-<h2>📦 Features</h2>
-<ul>
-  <li>Create interview slots</li>
-  <li>List all slots</li>
-  <li>Filter slots by status (e.g., AVAILABLE, BOOKED)</li>
-  <li>Ready for extension to include booking/reservation</li>
-</ul>
+## Responsibilities
 
-<h2>📁 Project Structure</h2>
+- Create and manage interviewer profiles.
+- Maintain interviewer availability blocks.
+- Create, list, search, and book interview slots.
+- Match available slots by skills, experience, and interview round.
+- Capture interview feedback.
+- Notify candidates and interviewers by email.
+- Notify Recruitment Service when feedback marks an interview as completed.
 
-<pre>
-interviewer-service/
-├── src/
-│   ├── main/
-│   │   ├── java/com/xplore/interviewer/
-│   │   │   ├── controller/          # REST APIs
-│   │   │   ├── entity/              # JPA Entity
-│   │   │   ├── repository/          # Spring Data JPA Repositories
-│   │   │   ├── service/             # Service layer
-│   │   │   └── InterviewerServiceApplication.java
-│   └── resources/
-│       ├── application.properties
-├── pom.xml
-└── README.md
-</pre>
+## Runtime Configuration
 
-<h2>🧪 API Endpoints</h2>
+The service runs on port `8081` by default.
 
-<h3>➕ Create Interview Slot</h3>
-<pre><code>POST /api/slots</code></pre>
+Important properties:
 
-<p><strong>Request Body (JSON):</strong></p>
-<pre>
+```properties
+server.port=8081
+spring.application.name=interviewer-service
+spring.datasource.url=jdbc:h2:mem:xplore
+spring.jpa.hibernate.ddl-auto=create-drop
+recruitment.service.url=${RECRUITMENT_SERVICE_URL:http://localhost:8082/api/recruitments}
+```
+
+Email settings are loaded from environment variables:
+
+```bash
+export MAIL_HOST=smtp.gmail.com
+export MAIL_PORT=587
+export MAIL_USERNAME=your-email@example.com
+export MAIL_PASSWORD=your-app-password
+```
+
+Do not commit real email credentials to source control.
+
+## Main APIs
+
+### Interviewers
+
+```http
+POST   /api/interviewers
+GET    /api/interviewers
+GET    /api/interviewers/{id}
+PUT    /api/interviewers/{id}
+DELETE /api/interviewers/{id}
+GET    /api/interviewers/search?skills=Java,Spring&minExperience=3
+```
+
+Example interviewer:
+
+```json
 {
-  "interviewerName": "Alice",
-  "dateTime": "2025-07-25 10:00",
-  "status": "AVAILABLE",
-  "candidateName": ""
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "phone": "9999999999",
+  "technicalSkills": ["Java", "Spring Boot"],
+  "yearsExperience": 6,
+  "designation": "Senior Engineer",
+  "department": "Engineering",
+  "bio": "Backend interviewer"
 }
-</pre>
+```
 
-<h3>📄 Get All Slots</h3>
-<pre><code>GET /api/slots</code></pre>
-<p>Returns a list of all interview slots.</p>
+### Availability
 
-<h2>🧰 Setup Instructions</h2>
+```http
+POST   /api/availability
+GET    /api/availability
+GET    /api/availability/{id}
+DELETE /api/availability/{id}
+```
 
-<h3>1. Clone the Repository</h3>
-<pre><code>git clone https://github.com/your-username/interviewer-service.git
-cd interviewer-service</code></pre>
+### Interview Slots
 
-<h3>2. Configure Database</h3>
-<p>Ensure MySQL is running and create a database:</p>
-<pre><code>CREATE DATABASE xplore;</code></pre>
+```http
+POST /api/slots
+GET  /api/slots
+GET  /api/slots/{id}
+GET  /api/slots/available?skills=Java,Spring&minExperience=3&round=L1
+GET  /api/slots/available-slots
+POST /api/slots/{id}/book?candidateId=1
+```
 
-<p>Update <code>application.properties</code>:</p>
-<pre>
-spring.datasource.url=jdbc:mysql://localhost:3306/xplore
-spring.datasource.username=root
-spring.datasource.password=your_password
-</pre>
+Example slot:
 
-<h3>3. Build & Run</h3>
-<pre><code>./mvnw clean install
-./mvnw spring-boot:run</code></pre>
+```json
+{
+  "interviewerId": 1,
+  "interviewerName": "Alice Johnson",
+  "technicalSkills": ["Java", "Spring Boot"],
+  "minYearsExperience": 3,
+  "startTime": "2026-05-20T10:00:00",
+  "endTime": "2026-05-20T11:00:00",
+  "round": "L1",
+  "status": "AVAILABLE"
+}
+```
 
-<h2>🚀 Future Enhancements</h2>
-<ul>
-  <li>Slot booking & reservation endpoints</li>
-  <li>Integration with candidate service</li>
-  <li>Email/SMS notifications</li>
-  <li>Swagger/OpenAPI documentation</li>
-  <li>Docker support</li>
-</ul>
+### Feedback
 
-<h2>📫 Contact</h2>
-<p>
-  For questions, ideas, or contributions:<br>
-  📧 <a href="mailto:shaikhusama745@gmail.com">shaikhusama745@gmail.com</a><br>
-  🔗 <a href="https://github.com/usamashaikh13" target="_blank">GitHub</a>
-</p>
+```http
+POST /api/feedback
+GET  /api/feedback/slot/{slotId}
+GET  /api/feedback/interviewer/{interviewerId}
+GET  /api/feedback/candidate/{candidateId}
+GET  /api/feedback/recruitment/{recruitmentId}
+```
+
+Example feedback:
+
+```json
+{
+  "interviewSlotId": 1,
+  "interviewerId": 1,
+  "candidateId": 1,
+  "recruitmentId": 1,
+  "technicalRating": 4,
+  "communicationRating": 4,
+  "problemSolvingRating": 5,
+  "overallRating": 4,
+  "recommendation": "HIRE",
+  "strengths": "Strong backend fundamentals",
+  "weaknesses": "Needs more cloud depth",
+  "detailedComments": "Good fit for the role."
+}
+```
+
+### Email Notifications
+
+```http
+POST /api/email/candidate
+POST /api/email/interviewer
+```
+
+Recruitment Service calls these endpoints after scheduling an interview.
+
+## Run Locally
+
+```bash
+./mvnw clean test
+./mvnw spring-boot:run
+```
+
+H2 console:
+
+```text
+http://localhost:8081/h2-console
+JDBC URL: jdbc:h2:mem:xplore
+User: sa
+Password:
+```
+
+## Service Integration
+
+This service expects Recruitment Service to be available at:
+
+```text
+http://localhost:8082/api/recruitments
+```
+
+Override it with:
+
+```bash
+export RECRUITMENT_SERVICE_URL=http://localhost:8082/api/recruitments
+```
+
+When feedback is submitted, the service updates the related recruitment record to `COMPLETED`.
