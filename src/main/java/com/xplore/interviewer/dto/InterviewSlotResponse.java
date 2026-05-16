@@ -15,6 +15,9 @@ public class InterviewSlotResponse {
     private LocalDateTime startTime;
     private Integer durationMinutes;
     private String round;
+    private String meetingLink;
     private SlotStatus status;
     private Long bookedCandidateId;
+    private String cancellationReason;
+    private String declineReason;
 }

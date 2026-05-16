@@ -1,10 +1,13 @@
 package com.xplore.interviewer.controller;
 
+import com.xplore.interviewer.dto.CancelSlotRequest;
 import com.xplore.interviewer.dto.InterviewSlotResponse;
+import com.xplore.interviewer.dto.RescheduleRequest;
 import com.xplore.interviewer.entity.InterviewSlot;
 import com.xplore.interviewer.entity.SlotStatus;
 import com.xplore.interviewer.service.InterviewService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Set;
@@ -51,6 +54,37 @@ public class InterviewController {
             @PathVariable Long id,
             @RequestParam Long candidateId) {
         return interviewService.bookSlot(id, candidateId);
+    }
+
+    @PatchMapping("/{id}/reschedule")
+    public InterviewSlotResponse rescheduleSlot(
+            @PathVariable Long id,
+            @RequestBody RescheduleRequest request) {
+        return interviewService.rescheduleSlot(id, request);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public InterviewSlotResponse cancelSlot(
+            @PathVariable Long id,
+            @RequestBody CancelSlotRequest request) {
+        return interviewService.cancelSlot(id, request.getReason());
+    }
+
+    @PatchMapping("/{id}/no-show")
+    public InterviewSlotResponse markNoShow(@PathVariable Long id) {
+        return interviewService.markNoShow(id);
+    }
+
+    @PatchMapping("/{id}/decline")
+    public InterviewSlotResponse declineAssignment(
+            @PathVariable Long id,
+            @RequestBody CancelSlotRequest request) {
+        return interviewService.declineAssignment(id, request.getReason());
+    }
+
+    @GetMapping(value = "/{id}/calendar.ics", produces = "text/calendar")
+    public String calendarInvite(@PathVariable Long id) {
+        return interviewService.generateIcs(id);
     }
 
     @GetMapping("/available-slots")

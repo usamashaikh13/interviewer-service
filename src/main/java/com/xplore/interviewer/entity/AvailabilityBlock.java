@@ -2,11 +2,13 @@ package com.xplore.interviewer.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "availability_blocks")
+@Data
 public class AvailabilityBlock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,4 @@ public class AvailabilityBlock {
 
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
-
-    // getters/setters
 }

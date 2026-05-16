@@ -5,7 +5,9 @@ public enum SlotStatus {
     BOOKED,
     RESERVED,
     COMPLETED,
-    SCHEDULED;
+    SCHEDULED,
+    CANCELLED,
+    NO_SHOW;
 
     public static boolean isValid(String status) {
         try {

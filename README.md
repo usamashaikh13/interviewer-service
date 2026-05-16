@@ -17,6 +17,9 @@ Interviewer Service is part of the Xplore hiring platform. It manages interviewe
 - Create and manage interviewer profiles.
 - Maintain interviewer availability blocks.
 - Create, list, search, and book interview slots.
+- Prevent interviewer double-booking with slot conflict detection.
+- Reschedule, cancel, decline, and mark no-show for interview slots.
+- Generate `.ics` calendar invites for scheduled interviews.
 - Match available slots by skills, experience, and interview round.
 - Capture interview feedback.
 - Notify candidates and interviewers by email.
@@ -93,6 +96,11 @@ GET  /api/slots/{id}
 GET  /api/slots/available?skills=Java,Spring&minExperience=3&round=L1
 GET  /api/slots/available-slots
 POST /api/slots/{id}/book?candidateId=1
+PATCH /api/slots/{id}/reschedule
+PATCH /api/slots/{id}/cancel
+PATCH /api/slots/{id}/decline
+PATCH /api/slots/{id}/no-show
+GET   /api/slots/{id}/calendar.ics
 ```
 
 Example slot:
@@ -106,7 +114,33 @@ Example slot:
   "startTime": "2026-05-20T10:00:00",
   "endTime": "2026-05-20T11:00:00",
   "round": "L1",
+  "meetingLink": "https://meet.example.com/interview-1",
   "status": "AVAILABLE"
+}
+```
+
+Slot statuses:
+
+```text
+AVAILABLE, BOOKED, RESERVED, COMPLETED, SCHEDULED, CANCELLED, NO_SHOW
+```
+
+Example reschedule request:
+
+```json
+{
+  "startTime": "2026-05-20T12:00:00",
+  "endTime": "2026-05-20T13:00:00",
+  "durationMinutes": 60,
+  "reason": "Candidate requested a later slot"
+}
+```
+
+Example cancel or decline request:
+
+```json
+{
+  "reason": "Interviewer unavailable"
 }
 ```
 

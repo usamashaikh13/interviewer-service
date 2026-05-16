@@ -29,9 +29,12 @@ public class InterviewSlot {
     private Integer durationMinutes; // 30, 45, 60
 
     private String round; // L1, L2
+    private String meetingLink;
 
     @Enumerated(EnumType.STRING)
     private SlotStatus status;
 
     private Long bookedCandidateId; // Added this field
+    private String cancellationReason;
+    private String declineReason;
 }
